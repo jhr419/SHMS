@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.appliances.mapper.FamAppliancesMapper">
+    
+    <resultMap type="FamAppliances" id="FamAppliancesResult">
+        <result property="id"    column="id"    />
+        <result property="applianceName"    column="appliance_name"    />
+        <result property="status"    column="status"    />
+        <result property="roomId"    column="room_id"    />
+        <result property="roomName"    column="room_name"    />
+        <result property="registrationDate"    column="registration_date"    />
+        <result property="warrantyPeriod"    column="warranty_period"    />
+    </resultMap>
+
+    <sql id="selectFamAppliancesVo">
+        select id, appliance_name, status, room_id, room_name, registration_date, warranty_period from fam_appliances
+    </sql>
+
+    <select id="selectFamAppliancesList" parameterType="FamAppliances" resultMap="FamAppliancesResult">
+        <include refid="selectFamAppliancesVo"/>
+        <where>  
+            <if test="applianceName != null  and applianceName != ''"> and appliance_name like concat('%', #{applianceName}, '%')</if>
+            <if test="roomName != null  and roomName != ''"> and room_name like concat('%', #{roomName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectFamAppliancesById" parameterType="Long" resultMap="FamAppliancesResult">
+        <include refid="selectFamAppliancesVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertFamAppliances" parameterType="FamAppliances" useGeneratedKeys="true" keyProperty="id">
+        insert into fam_appliances
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="applianceName != null and applianceName != ''">appliance_name,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="roomId != null">room_id,</if>
+            <if test="roomName != null and roomName != ''">room_name,</if>
+            <if test="registrationDate != null">registration_date,</if>
+            <if test="warrantyPeriod != null">warranty_period,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="applianceName != null and applianceName != ''">#{applianceName},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="roomId != null">#{roomId},</if>
+            <if test="roomName != null and roomName != ''">#{roomName},</if>
+            <if test="registrationDate != null">#{registrationDate},</if>
+            <if test="warrantyPeriod != null">#{warrantyPeriod},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFamAppliances" parameterType="FamAppliances">
+        update fam_appliances
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="applianceName != null and applianceName != ''">appliance_name = #{applianceName},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="roomId != null">room_id = #{roomId},</if>
+            <if test="roomName != null and roomName != ''">room_name = #{roomName},</if>
+            <if test="registrationDate != null">registration_date = #{registrationDate},</if>
+            <if test="warrantyPeriod != null">warranty_period = #{warrantyPeriod},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFamAppliancesById" parameterType="Long">
+        delete from fam_appliances where id = #{id}
+    </delete>
+
+    <delete id="deleteFamAppliancesByIds" parameterType="String">
+        delete from fam_appliances where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

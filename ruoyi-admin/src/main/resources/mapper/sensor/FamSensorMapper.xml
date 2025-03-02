@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.sensor.mapper.FamSensorMapper">
+    
+    <resultMap type="FamSensor" id="FamSensorResult">
+        <result property="id"    column="id"    />
+        <result property="sensorName"    column="sensor_name"    />
+        <result property="dataType"    column="data_type"    />
+        <result property="dataValue"    column="data_value"    />
+        <result property="roomId"    column="room_id"    />
+        <result property="roomName"    column="room_name"    />
+    </resultMap>
+
+    <sql id="selectFamSensorVo">
+        select id, sensor_name, data_type, data_value, room_id, room_name from fam_sensor
+    </sql>
+
+    <select id="selectFamSensorList" parameterType="FamSensor" resultMap="FamSensorResult">
+        <include refid="selectFamSensorVo"/>
+        <where>  
+            <if test="sensorName != null  and sensorName != ''"> and sensor_name like concat('%', #{sensorName}, '%')</if>
+            <if test="roomName != null  and roomName != ''"> and room_name like concat('%', #{roomName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectFamSensorById" parameterType="Long" resultMap="FamSensorResult">
+        <include refid="selectFamSensorVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertFamSensor" parameterType="FamSensor" useGeneratedKeys="true" keyProperty="id">
+        insert into fam_sensor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sensorName != null and sensorName != ''">sensor_name,</if>
+            <if test="dataType != null and dataType != ''">data_type,</if>
+            <if test="dataValue != null and dataValue != ''">data_value,</if>
+            <if test="roomId != null">room_id,</if>
+            <if test="roomName != null and roomName != ''">room_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sensorName != null and sensorName != ''">#{sensorName},</if>
+            <if test="dataType != null and dataType != ''">#{dataType},</if>
+            <if test="dataValue != null and dataValue != ''">#{dataValue},</if>
+            <if test="roomId != null">#{roomId},</if>
+            <if test="roomName != null and roomName != ''">#{roomName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFamSensor" parameterType="FamSensor">
+        update fam_sensor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sensorName != null and sensorName != ''">sensor_name = #{sensorName},</if>
+            <if test="dataType != null and dataType != ''">data_type = #{dataType},</if>
+            <if test="dataValue != null and dataValue != ''">data_value = #{dataValue},</if>
+            <if test="roomId != null">room_id = #{roomId},</if>
+            <if test="roomName != null and roomName != ''">room_name = #{roomName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFamSensorById" parameterType="Long">
+        delete from fam_sensor where id = #{id}
+    </delete>
+
+    <delete id="deleteFamSensorByIds" parameterType="String">
+        delete from fam_sensor where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

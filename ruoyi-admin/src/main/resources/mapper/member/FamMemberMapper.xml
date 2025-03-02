@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.member.mapper.FamMemberMapper">
+    
+    <resultMap type="FamMember" id="FamMemberResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="gender"    column="gender"    />
+        <result property="role"    column="role"    />
+        <result property="authority"    column="authority"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectFamMemberVo">
+        select id, name, gender, role, authority, status from fam_member
+    </sql>
+
+    <select id="selectFamMemberList" parameterType="FamMember" resultMap="FamMemberResult">
+        <include refid="selectFamMemberVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
+            <if test="role != null  and role != ''"> and role = #{role}</if>
+        </where>
+    </select>
+    
+    <select id="selectFamMemberById" parameterType="Long" resultMap="FamMemberResult">
+        <include refid="selectFamMemberVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertFamMember" parameterType="FamMember" useGeneratedKeys="true" keyProperty="id">
+        insert into fam_member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="gender != null and gender != ''">gender,</if>
+            <if test="role != null and role != ''">role,</if>
+            <if test="authority != null and authority != ''">authority,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="gender != null and gender != ''">#{gender},</if>
+            <if test="role != null and role != ''">#{role},</if>
+            <if test="authority != null and authority != ''">#{authority},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFamMember" parameterType="FamMember">
+        update fam_member
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="gender != null and gender != ''">gender = #{gender},</if>
+            <if test="role != null and role != ''">role = #{role},</if>
+            <if test="authority != null and authority != ''">authority = #{authority},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFamMemberById" parameterType="Long">
+        delete from fam_member where id = #{id}
+    </delete>
+
+    <delete id="deleteFamMemberByIds" parameterType="String">
+        delete from fam_member where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

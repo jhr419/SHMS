@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.room.mapper.FamRoomMapper">
+    
+    <resultMap type="FamRoom" id="FamRoomResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+    </resultMap>
+
+    <sql id="selectFamRoomVo">
+        select id, name from fam_room
+    </sql>
+
+    <select id="selectFamRoomList" parameterType="FamRoom" resultMap="FamRoomResult">
+        <include refid="selectFamRoomVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectFamRoomById" parameterType="Long" resultMap="FamRoomResult">
+        <include refid="selectFamRoomVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertFamRoom" parameterType="FamRoom" useGeneratedKeys="true" keyProperty="id">
+        insert into fam_room
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFamRoom" parameterType="FamRoom">
+        update fam_room
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFamRoomById" parameterType="Long">
+        delete from fam_room where id = #{id}
+    </delete>
+
+    <delete id="deleteFamRoomByIds" parameterType="String">
+        delete from fam_room where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

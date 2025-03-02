@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.switches.mapper.FamSwitchesMapper">
+    
+    <resultMap type="FamSwitches" id="FamSwitchesResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="status"    column="status"    />
+        <result property="relatedApplianceId"    column="related_appliance_id"    />
+        <result property="relatedApplianceName"    column="related_appliance_name"    />
+        <result property="roomId"    column="room_id"    />
+        <result property="roomName"    column="room_name"    />
+    </resultMap>
+
+    <sql id="selectFamSwitchesVo">
+        select id, name, status, related_appliance_id, related_appliance_name, room_id, room_name from fam_switches
+    </sql>
+
+    <select id="selectFamSwitchesList" parameterType="FamSwitches" resultMap="FamSwitchesResult">
+        <include refid="selectFamSwitchesVo"/>
+        <where>  
+            <if test="roomName != null  and roomName != ''"> and room_name like concat('%', #{roomName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectFamSwitchesById" parameterType="Long" resultMap="FamSwitchesResult">
+        <include refid="selectFamSwitchesVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertFamSwitches" parameterType="FamSwitches" useGeneratedKeys="true" keyProperty="id">
+        insert into fam_switches
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="relatedApplianceId != null">related_appliance_id,</if>
+            <if test="relatedApplianceName != null and relatedApplianceName != ''">related_appliance_name,</if>
+            <if test="roomId != null">room_id,</if>
+            <if test="roomName != null and roomName != ''">room_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="relatedApplianceId != null">#{relatedApplianceId},</if>
+            <if test="relatedApplianceName != null and relatedApplianceName != ''">#{relatedApplianceName},</if>
+            <if test="roomId != null">#{roomId},</if>
+            <if test="roomName != null and roomName != ''">#{roomName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFamSwitches" parameterType="FamSwitches">
+        update fam_switches
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="relatedApplianceId != null">related_appliance_id = #{relatedApplianceId},</if>
+            <if test="relatedApplianceName != null and relatedApplianceName != ''">related_appliance_name = #{relatedApplianceName},</if>
+            <if test="roomId != null">room_id = #{roomId},</if>
+            <if test="roomName != null and roomName != ''">room_name = #{roomName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFamSwitchesById" parameterType="Long">
+        delete from fam_switches where id = #{id}
+    </delete>
+
+    <delete id="deleteFamSwitchesByIds" parameterType="String">
+        delete from fam_switches where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
